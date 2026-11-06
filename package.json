@@ -1,0 +1,52 @@
+{
+  "name": "opencode-code-reference",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Read-only code explorer and snapshot references for OpenCode Desktop",
+  "license": "MIT",
+  "exports": {
+    "./gui-experimental": "./dist/gui-experimental.cjs"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "scripts"
+  ],
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "test:ui": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "check": "npm test && npm run typecheck && npm run build && npm run test:ui",
+    "install:local": "node scripts/install.mjs"
+  },
+  "dependencies": {
+    "@codemirror/lang-css": "^6.3.0",
+    "@codemirror/lang-html": "^6.4.0",
+    "@codemirror/lang-javascript": "^6.2.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/lang-markdown": "^6.3.0",
+    "@codemirror/lang-python": "^6.2.0",
+    "@codemirror/language": "^6.11.0",
+    "@codemirror/legacy-modes": "^6.5.0",
+    "@codemirror/search": "^6.5.0",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.0",
+    "@lezer/highlight": "^1.2.5",
+    "@opencode/plugin": "2.2.5",
+    "jsonc-parser": "^3.3.1"
+  },
+  "devDependencies": {
+    "@opencode/client": "2.2.5",
+    "@playwright/test": "^1.58.0",
+    "@types/node": "^24.0.0",
+    "prettier": "^3.9.10",
+    "solid-js": "^1.9.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.2.0",
+    "vite-plugin-solid": "^2.11.0"
+  }
+}
