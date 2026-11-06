@@ -55,7 +55,7 @@ export default Plugin.define({
     };
     const tab = {
       id: "explorer",
-      title: "Kod referansları",
+      title: "CodeLink",
       closable: "compact" as const,
     };
     ctx.add(Style, styles);
@@ -84,10 +84,7 @@ export default Plugin.define({
               set: (value: ReturnType<typeof initialState>) => store.set(value),
             };
             return (
-              <Show
-                when={store.ready()}
-                fallback={<p>Referanslar yükleniyor…</p>}
-              >
+              <Show when={store.ready()} fallback={<p>Loading references…</p>}>
                 <Explorer
                   {...props}
                   state={port}
@@ -112,26 +109,26 @@ export default Plugin.define({
     ctx.add(MenuItem, {
       id: "open",
       menu: "session.panel",
-      title: "Kod referansları",
+      title: "CodeLink",
       icon: "code",
       run: () => open(),
     });
     for (const command of [
       {
         id: "open",
-        title: "Kod referansları: Paneli aç",
+        title: "CodeLink: Open panel",
         bind: "mod+shift+e",
         mode: undefined,
       },
       {
         id: "find",
-        title: "Kod referansları: Dosya bul",
+        title: "CodeLink: Find file",
         bind: undefined,
         mode: "files" as const,
       },
       {
         id: "search",
-        title: "Kod referansları: Projede ara",
+        title: "CodeLink: Search project",
         bind: undefined,
         mode: "text" as const,
       },
@@ -151,8 +148,8 @@ export default Plugin.define({
         if (!ref || !session) return;
         if (ref.directory && ref.directory !== session.location?.directory) {
           void ctx.dialogs.alert({
-            title: "Referans başka bir projeye ait",
-            description: `Bu kod ${ref.directory} projesinden seçilmiş. İlgili projedeki sohbeti açın.`,
+            title: "Reference belongs to another project",
+            description: `This code was selected from ${ref.directory}. Open a conversation in that project.`,
           });
           return;
         }

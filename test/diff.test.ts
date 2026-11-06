@@ -6,6 +6,6 @@ test("unified diff keeps context on both sides and omits metadata", () => {
     patchSides(
       "--- a/a\n+++ b/a\n@@ -1,2 +1,2 @@\n same\n-old\n+new\n\\ No newline at end of file",
     ),
-    { before: "⋯ satır 1\nsame\nold", after: "⋯ satır 1\nsame\nnew" },
+    { before: "⋯ line 1\nsame\nold", after: "⋯ line 1\nsame\nnew" },
   );
 });

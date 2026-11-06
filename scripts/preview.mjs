@@ -42,17 +42,17 @@ try {
   await page.keyboard.press("Control+Home");
   await page.keyboard.press("Control+Shift+ArrowDown");
   await page
-    .getByRole("button", { name: "Seçimi sohbete ekle", exact: true })
+    .getByRole("button", { name: "Add selection to chat", exact: true })
     .click();
   await page
-    .getByLabel("Referans notu")
-    .fill("Bu fonksiyonun Python karşılığıyla farkı nedir?");
+    .getByLabel("Reference note")
+    .fill("How does this function compare with its Python counterpart?");
   await page.getByRole("button", { name: "b.py", exact: true }).click();
   await page.locator(".cr-editor .cm-content").click();
   await page.keyboard.press("Control+Home");
   await page.keyboard.press("Control+Shift+ArrowDown");
   await page
-    .getByRole("button", { name: "Seçimi sohbete ekle", exact: true })
+    .getByRole("button", { name: "Add selection to chat", exact: true })
     .click();
   await page.locator(".cr-root").screenshot({ path: "docs/preview-light.png" });
   await page.emulateMedia({ colorScheme: "dark" });

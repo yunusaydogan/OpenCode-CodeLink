@@ -6,8 +6,8 @@ export function patchSides(patch: string) {
     const hunk = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
     if (hunk) {
       inHunk = true;
-      before.push(`⋯ satır ${hunk[1]}`);
-      after.push(`⋯ satır ${hunk[2]}`);
+      before.push(`⋯ line ${hunk[1]}`);
+      after.push(`⋯ line ${hunk[2]}`);
       continue;
     }
     if (!inHunk) continue;

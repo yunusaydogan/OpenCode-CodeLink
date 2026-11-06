@@ -1,5 +1,11 @@
 # Verification — 2026-11-06
 
+## English public release — 0.1.1
+
+All plugin-owned UI copy, accessibility labels, installer output, error messages, attachment metadata, and generated pair questions now use English. Existing plugin IDs, stored reference schemas, and navigation links remain unchanged. The English README documents clone/build/registration, manual config, workflow, shortcuts, limits, data handling, updates, removal, troubleshooting, and development. Sample light/dark previews were regenerated and inspected.
+
+Verification: 15 unit/installer tests and 10 browser interaction tests passed, along with typechecking, production build, and the isolated real OpenCode 2.2.5 server smoke test. Package dry-run includes the GUI bundle, README, license, and installer.
+
 ## Directory label regression fix
 
 Confirmed against the running native API that directories are returned as `.git/`, `src/`, `docs/`, etc. Taking the last slash-separated segment produced empty labels. The display-name helper now strips trailing slash/backslash separators without changing the API path used to open directories. The browser fixture now reproduces native trailing-slash paths, including nested folders.

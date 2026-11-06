@@ -5,8 +5,8 @@ import { initialState, type ViewState } from "../src/state.ts";
 import { styles } from "../src/styles.ts";
 import type { ComposerNote } from "@opencode/plugin/gui";
 const a =
-  'function greet(name: string) {\n  return "hello " + name;\n}\ngreet("Yunus");';
-const b = 'def greet(name):\n    return "hello " + name\ngreet("Yunus")';
+  'function greet(name: string) {\n  return "hello " + name;\n}\ngreet("Ada");';
+const b = 'def greet(name):\n    return "hello " + name\ngreet("Ada")';
 function App() {
   const [session, setSession] = createSignal("session-a");
   const [files, setFiles] = createSignal<Record<string, string>>({
@@ -128,7 +128,7 @@ function App() {
             {
               file: "src/a.ts",
               patch:
-                '--- a/src/a.ts\n+++ b/src/a.ts\n@@ -1,4 +1,4 @@\n function greet(name: string) {\n-  return "hello " + name;\n+  return "merhaba " + name;\n }\n greet("Yunus");',
+                '--- a/src/a.ts\n+++ b/src/a.ts\n@@ -1,4 +1,4 @@\n function greet(name: string) {\n-  return "hello " + name;\n+  return "welcome " + name;\n }\n greet("Ada");',
               additions: 1,
               deletions: 1,
               status: "modified",
@@ -162,7 +162,7 @@ function App() {
           onClick={() => {
             setFiles((x) => ({
               ...x,
-              "src/a.ts": a.replace("hello", "merhaba"),
+              "src/a.ts": a.replace("hello", "welcome"),
             }));
             setChanged(true);
           }}
@@ -215,7 +215,7 @@ function App() {
                     server: { client },
                   } as unknown as ExplorerProps["session"]
                 }
-                tab={{ id: "explorer", title: "Kod referansları" }}
+                tab={{ id: "explorer", title: "CodeLink" }}
                 changes={() =>
                   changes as unknown as ReturnType<ExplorerProps["changes"]>
                 }

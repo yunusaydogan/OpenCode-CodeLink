@@ -17,13 +17,13 @@ test("installer preserves JSONC comments and other plugins, backs up once, is id
         ["scripts/install.mjs", "--config-dir", dir],
         { cwd: resolve("."), encoding: "utf8" },
       );
-    install();
+    assert.match(install(), /CodeLink registered in:/);
     const installed = await readFile(config, "utf8");
     assert.match(installed, /Keep this comment/);
     assert.match(installed, /other-plugin/);
     assert.match(installed, /test\/model/);
     assert.ok(installed.includes(resolve(".")));
-    install();
+    assert.match(install(), /CodeLink is already registered/);
     assert.equal(await readFile(config, "utf8"), installed);
     const backups = (await readdir(dir)).filter((p) => p.includes(".bak-"));
     assert.equal(backups.length, 1);

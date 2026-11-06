@@ -14,7 +14,7 @@ import { parse, modify, applyEdits } from "jsonc-parser";
 const args = process.argv.slice(2);
 const index = args.indexOf("--config-dir");
 if (args.length && (index !== 0 || args.length !== 2))
-  throw Error("Kullanım: node scripts/install.mjs [--config-dir KLASÖR]");
+  throw Error("Usage: node scripts/install.mjs [--config-dir CONFIG_DIR]");
 const directory =
   index === 0
     ? resolve(args[1])
@@ -35,7 +35,7 @@ for (const name of ["opencode.json", "opencode.jsonc"]) {
     const stat = await lstat(path);
     if (stat.isSymbolicLink())
       throw Error(
-        `Sembolik bağlantı olan ayar dosyası otomatik değiştirilmiyor: ${path}`,
+        `Symlinked config files are not modified automatically: ${path}`,
       );
     source = await readFile(path, "utf8");
     config = path;
@@ -54,14 +54,12 @@ if (
   typeof value !== "object" ||
   Array.isArray(value)
 )
-  throw Error("OpenCode ayar dosyası geçerli bir JSON/JSONC nesnesi olmalı.");
+  throw Error("The OpenCode config must be a valid JSON/JSONC object.");
 if (value.plugins !== undefined && !Array.isArray(value.plugins))
-  throw Error("OpenCode plugins ayarı bir liste olmalı.");
+  throw Error("The OpenCode plugins setting must be an array.");
 const plugins = value.plugins ?? [];
 if (plugins.some((p) => p === root || p?.package === root)) {
-  console.log(
-    "Kod referansları zaten kayıtlı. OpenCode içinden paneli açabilirsiniz.",
-  );
+  console.log("CodeLink is already registered. Open the panel in OpenCode.");
 } else {
   const next = applyEdits(
     source,
@@ -78,9 +76,7 @@ if (plugins.some((p) => p === root || p?.package === root)) {
   } finally {
     await unlink(temporary).catch(() => {});
   }
-  console.log(`Kod referansları eklendi: ${config}`);
-  if (exists) console.log(`Önceki ayarlar yedeklendi: ${backup}`);
-  console.log(
-    "OpenCode içinde + → Kod referansları. Gerekirse uygulamayı yeniden açın.",
-  );
+  console.log(`CodeLink registered in: ${config}`);
+  if (exists) console.log(`Previous config backed up to: ${backup}`);
+  console.log("In OpenCode, choose + → CodeLink. Restart the app if needed.");
 }

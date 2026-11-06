@@ -41,7 +41,10 @@ test("expansion captures surrounding lines and rejects deleted selection", () =>
   const expanded = expand(ref, "a\nb\nc\nd", 1);
   assert.equal(expanded.code, "a\nb\nc");
   assert.equal(expanded.start, 1);
-  assert.throws(() => expand(ref, "changed", 2), /bulunamadı/);
+  assert.throws(
+    () => expand(ref, "changed", 2),
+    /could not be uniquely located/,
+  );
 });
 test("reject empty, oversized, invalid and external paths", () => {
   assert.throws(() => capture("a", "abc", 1, 1));
@@ -70,7 +73,7 @@ test("pair questions name both refs and require two selections", () => {
   const a = capture("a.ts", "one", 0, 3),
     b = capture("b.ts", "two", 0, 3);
   assert.match(pairQuestion([a, b], "compare"), /a.ts/);
-  assert.match(pairQuestion([a, b], "relate"), /bağlantı/);
+  assert.match(pairQuestion([a, b], "relate"), /relationship/);
   assert.throws(() => pairQuestion([a], "compare"));
 });
 test("reference link and snapshot retain the originating workspace", () => {

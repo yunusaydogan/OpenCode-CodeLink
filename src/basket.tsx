@@ -18,13 +18,13 @@ export function Basket(props: {
   const [history, setHistory] = createSignal(false),
     [collapsed, setCollapsed] = createSignal(false);
   return (
-    <section class="cr-basket" aria-label="Referans sepeti">
+    <section class="cr-basket" aria-label="Reference basket">
       <header class="cr-section-head">
         <button
           onClick={() => setCollapsed(!collapsed())}
           aria-expanded={!collapsed()}
         >
-          {collapsed() ? "▸" : "▾"} Referanslar{" "}
+          {collapsed() ? "▸" : "▾"} References{" "}
           <span class="cr-count">{props.refs.length}</span>
         </button>
         <div>
@@ -32,10 +32,10 @@ export function Basket(props: {
             aria-pressed={history()}
             onClick={() => setHistory(!history())}
           >
-            Geçmiş
+            History
           </button>
           <button onClick={props.clear} disabled={!props.refs.length}>
-            Sepeti temizle
+            Clear basket
           </button>
         </div>
       </header>
@@ -44,8 +44,8 @@ export function Basket(props: {
           when={props.refs.length}
           fallback={
             <p class="cr-empty-small">
-              Kod seçip sağ tıklayarak sohbete referans ekleyin. Farklı
-              dosyalardan seçimler bir arada kalır.
+              Select code and right-click to add a chat reference. Selections
+              from different files stay together.
             </p>
           }
         >
@@ -61,7 +61,7 @@ export function Basket(props: {
                     <div class="cr-ref-heading">
                       <input
                         type="checkbox"
-                        aria-label="Karşılaştırmaya seç"
+                        aria-label="Select for comparison"
                         checked={props.selected.includes(ref.id)}
                         onChange={() => props.toggle(ref.id)}
                       />
@@ -76,8 +76,8 @@ export function Basket(props: {
                         </span>
                       </button>
                       <button
-                        aria-label="Referansı çıkar"
-                        title="Sohbet taslağından çıkar"
+                        aria-label="Remove reference"
+                        title="Remove from chat draft"
                         onClick={() => props.remove(ref.id)}
                       >
                         ×
@@ -85,37 +85,37 @@ export function Basket(props: {
                     </div>
                     <Show when={status()?.changed}>
                       <span class="cr-stale">
-                        Seçimden sonra değişti
+                        Changed since selection
                         {status()?.exact
-                          ? " · yeni konumu bulundu"
-                          : " · yeniden seçim gerekebilir"}
+                          ? " · new location found"
+                          : " · select again if needed"}
                       </span>
                     </Show>
                     <Show when={!status()}>
                       <span class="cr-muted">
-                        Güncel dosya henüz doğrulanamadı
+                        Current file has not been verified yet
                       </span>
                     </Show>
                     <pre
                       class="cr-preview"
                       onClick={() => props.snapshot(ref)}
-                      title="Seçim anındaki kodu aç"
+                      title="Open captured code"
                     >
                       {ref.code.split("\n").slice(0, 3).join("\n")}
                     </pre>
                     <input
                       class="cr-note"
-                      aria-label="Referans notu"
-                      placeholder="Not ekle: hata burada, bunun gibi olmalı…"
+                      aria-label="Reference note"
+                      placeholder="Add a note: the bug is here, match this behavior…"
                       value={ref.note}
                       onInput={(e) => props.note(ref.id, e.currentTarget.value)}
                     />
                     <div class="cr-ref-actions">
                       <button onClick={() => props.snapshot(ref)}>
-                        Sabit kopya
+                        Snapshot
                       </button>
                       <button onClick={() => props.expand(ref)}>
-                        Çevresini ekle
+                        Include context
                       </button>
                     </div>
                   </article>
@@ -124,24 +124,24 @@ export function Basket(props: {
             </For>
           </div>
           <div class="cr-pair">
-            <span>{props.selected.length}/2 seçili</span>
+            <span>{props.selected.length}/2 selected</span>
             <button
               disabled={props.selected.length !== 2}
               onClick={() => props.pair("compare")}
             >
-              Karşılaştır
+              Compare
             </button>
             <button
               disabled={props.selected.length !== 2}
               onClick={() => props.pair("relate")}
             >
-              Bağlantıyı açıkla
+              Explain relationship
             </button>
             <button
               disabled={props.selected.length !== 2}
               onClick={() => props.pair("behavior")}
             >
-              Neden farklı?
+              Why different?
             </button>
           </div>
         </Show>
@@ -153,14 +153,12 @@ export function Basket(props: {
                   <button onClick={() => props.open(ref)}>
                     {ref.path}:{ref.start}–{ref.end}
                   </button>
-                  <button onClick={() => props.restore(ref)}>
-                    Yeniden ekle
-                  </button>
+                  <button onClick={() => props.restore(ref)}>Add again</button>
                 </div>
               )}
             </For>
             <Show when={!props.history.length}>
-              <p class="cr-empty-small">Henüz referans yok.</p>
+              <p class="cr-empty-small">No references yet.</p>
             </Show>
           </div>
         </Show>

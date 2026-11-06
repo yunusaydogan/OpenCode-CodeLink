@@ -127,7 +127,8 @@ export function Explorer(props: ExplorerProps) {
   const sides = () => patchSides(diff()?.patch ?? "");
   let navigation = 0;
   const open = async (path: string, start?: number, end?: number) => {
-    if (!validPath(path)) throw Error("Proje dışındaki dosya açılamaz.");
+    if (!validPath(path))
+      throw Error("Files outside the project cannot be opened.");
     navigation++;
     update((d) => {
       if (!d.tabs.includes(path)) d.tabs.push(path);
@@ -145,11 +146,11 @@ export function Explorer(props: ExplorerProps) {
   const add = (ref: Reference) => {
     if (!props.screen.composer.quotable())
       throw Error(
-        "Bu sohbete şu anda referans eklenemiyor. Normal sohbet moduna geçin.",
+        "References cannot be added right now. Switch to normal chat mode.",
       );
     if (refs().length >= 30 && !data().basket.includes(ref.id))
       throw Error(
-        "Sepette en fazla 30 referans tutulabilir. Önce bazılarını çıkarın.",
+        "The basket can hold up to 30 references. Remove some before adding more.",
       );
     props.screen.composer.attach(attachment(ref, "opencode-code-reference"));
     update((d) => {
@@ -169,7 +170,7 @@ export function Explorer(props: ExplorerProps) {
     safely(() => {
       const s = selection();
       if (!s || s.path !== active() || showDiff() || snapshot())
-        throw Error("Önce güncel dosyada kod seçin.");
+        throw Error("Select code in the current file first.");
       // Snapshot uses the exact buffer the user selected, even if a disk update arrives now.
       add(capture(s.path, s.text, s.from, s.to, props.session.directory));
       setMenu(undefined);
@@ -203,7 +204,7 @@ export function Explorer(props: ExplorerProps) {
       if (!found.exact) {
         setSnapshot(ref);
         setError(
-          "Seçilen kod güncel dosyada bulunamadı. Seçim anındaki kopya gösteriliyor.",
+          "The selected code could not be located in the current file. Showing the captured snapshot.",
         );
       }
     });
@@ -252,7 +253,7 @@ export function Explorer(props: ExplorerProps) {
               .map((path) => ({ path, line: 0, text: "" })),
           );
           setSearchInfo(
-            paths.length >= 100 ? "İlk 100 dosya gösteriliyor." : "",
+            paths.length >= 100 ? "Showing the first 100 files." : "",
           );
         }
       } else {
@@ -262,13 +263,13 @@ export function Explorer(props: ExplorerProps) {
           q,
           abort.signal,
           (n) => {
-            if (accepts()) setSearchInfo(`${n} dosya tarandı…`);
+            if (accepts()) setSearchInfo(`${n} files scanned…`);
           },
         );
         if (accepts()) {
           setResults(result.hits);
           setSearchInfo(
-            `${result.scanned} dosya tarandı.${result.limited ? " Tarama sınırı: 2.000 dosya, dosya başına 512 KB, 200 sonuç." : ""}${result.errors ? ` ${result.errors} dosya okunamadı.` : ""}`,
+            `${result.scanned} files scanned.${result.limited ? " Search limits: 2,000 files, 512 KB per file, 200 results." : ""}${result.errors ? ` ${result.errors} files could not be read.` : ""}`,
           );
         }
       }
@@ -394,7 +395,7 @@ export function Explorer(props: ExplorerProps) {
                   )
                 }
               >
-                Yeniden dene
+                Retry
               </button>
             </p>
           </Show>
@@ -418,7 +419,7 @@ export function Explorer(props: ExplorerProps) {
                     >
                       <span
                         class="cr-change-dot"
-                        title="Değiştirildi"
+                        title="Changed"
                         aria-hidden="true"
                       >
                         ●
@@ -460,18 +461,18 @@ export function Explorer(props: ExplorerProps) {
     >
       <header class="cr-toolbar">
         <button
-          aria-label="Dosya ağacını aç/kapat"
+          aria-label="Toggle file tree"
           aria-pressed={showTree()}
           onClick={() => setShowTree(!showTree())}
         >
           ☰
         </button>
-        <strong>Kod referansları</strong>
+        <strong>CodeLink</strong>
         <div class="cr-toolbar-actions">
           <button onClick={() => launchSearch("files")} title="Ctrl+P">
-            Dosya bul
+            Find file
           </button>
-          <button onClick={() => launchSearch("text")}>Projede ara</button>
+          <button onClick={() => launchSearch("text")}>Search project</button>
           <button
             disabled={!lastChange() && !diffs().length}
             onClick={() =>
@@ -483,14 +484,14 @@ export function Explorer(props: ExplorerProps) {
               )
             }
           >
-            Son değişikliğe git
+            Go to latest change
           </button>
         </div>
       </header>
       <Show when={error()}>
         <div role="alert" class="cr-error">
           {error()}
-          <button aria-label="Uyarıyı kapat" onClick={() => setError("")}>
+          <button aria-label="Dismiss message" onClick={() => setError("")}>
             ×
           </button>
         </div>
@@ -498,13 +499,13 @@ export function Explorer(props: ExplorerProps) {
       <Show when={searching()}>
         <section
           class="cr-search"
-          aria-label={mode() === "files" ? "Dosya bul" : "Projede ara"}
+          aria-label={mode() === "files" ? "Find file" : "Search project"}
         >
           <div class="cr-search-input">
             <input
               ref={searchInput}
               placeholder={
-                mode() === "files" ? "Dosya adı…" : "Proje içinde metin ara…"
+                mode() === "files" ? "File name…" : "Search project text…"
               }
               value={query()}
               onInput={(e) => {
@@ -521,9 +522,9 @@ export function Explorer(props: ExplorerProps) {
                 }
               }}
             />
-            <button onClick={() => void runSearch()}>Ara</button>
+            <button onClick={() => void runSearch()}>Search</button>
             <button
-              aria-label="Aramayı kapat"
+              aria-label="Close search"
               onClick={() => {
                 searchAbort?.abort();
                 searchSequence++;
@@ -552,21 +553,21 @@ export function Explorer(props: ExplorerProps) {
             </For>
           </div>
           <p class="cr-muted" role="status">
-            {busy() ? "Aranıyor… " : ""}
+            {busy() ? "Searching… " : ""}
             {searchInfo()}
             {!busy() && query() && !results().length
-              ? " Sonuç bulunamadı."
+              ? " No results found."
               : ""}
           </p>
         </section>
       </Show>
       <div class="cr-workspace">
         <Show when={showTree()}>
-          <aside class="cr-tree" aria-label="Proje dosyaları">
+          <aside class="cr-tree" aria-label="Project files">
             <div class="cr-tree-title" title={props.session.directory}>
               {props.session.directory.split("/").filter(Boolean).at(-1)}
               <button
-                aria-label="Dosya ağacını yenile"
+                aria-label="Refresh file tree"
                 onClick={() =>
                   safely(() => props.screen.file.tree.sync("", { force: true }))
                 }
@@ -578,7 +579,7 @@ export function Explorer(props: ExplorerProps) {
           </aside>
         </Show>
         <main class="cr-code-area">
-          <nav class="cr-tabs" aria-label="Açık dosyalar">
+          <nav class="cr-tabs" aria-label="Open files">
             <For each={data().tabs}>
               {(path) => (
                 <div
@@ -589,7 +590,7 @@ export function Explorer(props: ExplorerProps) {
                     {path.split("/").pop()}
                   </button>
                   <button
-                    aria-label={`${path} sekmesini kapat`}
+                    aria-label={`${path} — close tab`}
                     onClick={() => closeTab(path)}
                   >
                     ×
@@ -602,22 +603,23 @@ export function Explorer(props: ExplorerProps) {
             when={active()}
             fallback={
               <div class="cr-welcome">
-                <strong>Kodu seç, soruna bağla.</strong>
+                <strong>Select code. Ask with context.</strong>
                 <p>
-                  Soldan bir dosya açın. İlgili satırları seçip sağ tıklayın;
-                  farklı dosyalardan kodları aynı soruda bir araya getirin.
+                  Open a file from the tree. Select the relevant lines and
+                  right-click to bring code from different files into one
+                  conversation.
                 </p>
                 <button onClick={() => launchSearch("files")}>
-                  Dosya bul <kbd>Ctrl P</kbd>
+                  Find file <kbd>Ctrl P</kbd>
                 </button>
               </div>
             }
           >
             <div class="cr-file-toolbar">
               <span title={active()}>{active()}</span>
-              <span class="cr-readonly">Salt okunur</span>
+              <span class="cr-readonly">Read-only</span>
               <button
-                aria-label="Değişiklikleri göster"
+                aria-label="Show changes"
                 disabled={!diff()}
                 aria-pressed={showDiff()}
                 onClick={() => {
@@ -627,7 +629,7 @@ export function Explorer(props: ExplorerProps) {
                   setSelection(undefined);
                 }}
               >
-                Önce / sonra
+                Before / after
               </button>
               <button
                 class="cr-primary"
@@ -640,7 +642,7 @@ export function Explorer(props: ExplorerProps) {
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={addSelection}
               >
-                Seçimi sohbete ekle
+                Add selection to chat
               </button>
             </div>
             <Show
@@ -648,10 +650,10 @@ export function Explorer(props: ExplorerProps) {
               fallback={
                 <div class="cr-snapshot">
                   <header>
-                    Seçim anındaki kopya · {snapshot()!.path}:
-                    {snapshot()!.start}–{snapshot()!.end}
+                    Captured snapshot · {snapshot()!.path}:{snapshot()!.start}–
+                    {snapshot()!.end}
                     <button onClick={() => setSnapshot(undefined)}>
-                      Güncel dosyaya dön
+                      Back to current file
                     </button>
                   </header>
                   <CodeEditor text={snapshot()!.code} path={snapshot()!.path} />
@@ -664,22 +666,22 @@ export function Explorer(props: ExplorerProps) {
                   <div class="cr-diff">
                     <div>
                       <h4>
-                        Önce <small>Değişen bölümler</small>
+                        Before <small>Changed sections</small>
                       </h4>
                       <CodeEditor
                         text={sides().before}
                         path={active()}
-                        label="Önceki kod"
+                        label="Previous code"
                       />
                     </div>
                     <div>
                       <h4>
-                        Sonra <small>Değişen bölümler</small>
+                        After <small>Changed sections</small>
                       </h4>
                       <CodeEditor
                         text={sides().after}
                         path={active()}
-                        label="Sonraki kod"
+                        label="Updated code"
                       />
                     </div>
                   </div>
@@ -687,19 +689,19 @@ export function Explorer(props: ExplorerProps) {
               >
                 <Show
                   when={!file()?.loading}
-                  fallback={<div class="cr-empty-small">Dosya yükleniyor…</div>}
+                  fallback={<div class="cr-empty-small">Loading file…</div>}
                 >
                   <Show
                     when={!file()?.error && !file()?.notFound}
                     fallback={
                       <div class="cr-empty-small">
-                        {file()?.error ?? "Dosya artık mevcut değil."}
+                        {file()?.error ?? "This file no longer exists."}
                         <button
                           onClick={() =>
                             safely(() => sync(active(), { force: true }))
                           }
                         >
-                          Yeniden dene
+                          Retry
                         </button>
                       </div>
                     }
@@ -709,8 +711,8 @@ export function Explorer(props: ExplorerProps) {
                       fallback={
                         <div class="cr-empty-small">
                           {file()?.content?.type === "binary"
-                            ? "Bu dosya metin değil."
-                            : "Bu görünüm en fazla 2 milyon karakter açar."}
+                            ? "This is not a text file."
+                            : "This view supports up to 2 million characters."}
                         </div>
                       }
                     >
@@ -738,11 +740,11 @@ export function Explorer(props: ExplorerProps) {
               </Show>
             </Show>
             <footer class="cr-code-status">
-              <span>{text()?.split("\n").length ?? 0} satır</span>
+              <span>{text()?.split("\n").length ?? 0} lines</span>
               <span>
                 {selection() && selection()!.to > selection()!.from
-                  ? `${selection()!.to - selection()!.from} karakter seçili`
-                  : "Seçili satırları ekle: Ctrl+Shift+L"}
+                  ? `${selection()!.to - selection()!.from} characters selected`
+                  : "Add selected lines: Ctrl+Shift+L"}
               </span>
             </footer>
           </Show>
@@ -779,7 +781,7 @@ export function Explorer(props: ExplorerProps) {
         expand={(ref) =>
           safely(() => {
             const now = content(ref.path);
-            if (now === undefined) throw Error("Önce dosyayı yükleyin.");
+            if (now === undefined) throw Error("Load the file first.");
             const next = expand(ref, now);
             add(next);
             remove(ref.id);
@@ -828,7 +830,7 @@ export function Explorer(props: ExplorerProps) {
             disabled={!selection() || selection()!.from === selection()!.to}
             onClick={addSelection}
           >
-            Sohbete referans ekle
+            Add reference to chat
           </button>
           <button
             role="menuitem"
@@ -852,7 +854,7 @@ export function Explorer(props: ExplorerProps) {
               })
             }
           >
-            Çevresiyle birlikte ekle
+            Add with surrounding context
           </button>
           <button
             role="menuitem"
@@ -861,7 +863,7 @@ export function Explorer(props: ExplorerProps) {
               launchSearch("text");
             }}
           >
-            Projede ara
+            Search project
           </button>
         </div>
       </Show>

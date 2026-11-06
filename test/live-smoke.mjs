@@ -42,7 +42,7 @@ try {
     password = output.match(/server password ([^\s]+)/)?.[1];
     if (url && password) break;
     if (child.exitCode !== null)
-      throw Error("OpenCode test sunucusu erken kapandı.");
+      throw Error("The isolated OpenCode test server exited early.");
     await delay(50);
   }
   assert.ok(url && password, "Server startup timeout");
@@ -72,7 +72,7 @@ try {
     "Native host did not serve the GUI bundle",
   );
   // Exercise the exact read/list APIs used by project search against a real workspace.
-  await writeFile(join(base, "hello.ts"), 'export const hello = "merhaba";');
+  await writeFile(join(base, "hello.ts"), 'export const hello = "welcome";');
   const listing = await client.file.list({
     location: { directory: base },
     path: "",
@@ -82,7 +82,7 @@ try {
     location: { directory: base },
     path: "hello.ts",
   });
-  assert.match(new TextDecoder().decode(bytes), /merhaba/);
+  assert.match(new TextDecoder().decode(bytes), /welcome/);
   console.log(
     "PASS: OpenCode 2.2.5 registered GUI-only plugin, served bundle, listed and read project files.",
   );

@@ -1,8 +1,8 @@
 {
   "name": "opencode-code-reference",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
-  "description": "Read-only code explorer and snapshot references for OpenCode Desktop",
+  "description": "CodeLink: a read-only code explorer with immutable multi-file chat references for OpenCode Desktop",
   "license": "MIT",
   "exports": {
     "./gui-experimental": "./dist/gui-experimental.cjs"
@@ -48,5 +48,21 @@
     "typescript": "^5.9.0",
     "vite": "^7.2.0",
     "vite-plugin-solid": "^2.11.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yunusaydogan/OpenCode-CodeLink.git"
+  },
+  "homepage": "https://github.com/yunusaydogan/OpenCode-CodeLink#readme",
+  "bugs": {
+    "url": "https://github.com/yunusaydogan/OpenCode-CodeLink/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "codelink",
+    "code-explorer",
+    "code-reference",
+    "desktop"
+  ]
 }

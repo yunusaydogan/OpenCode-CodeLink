@@ -97,7 +97,7 @@ export function CodeEditor(props: {
           syntaxHighlighting(codeColors),
           lang.of(language(props.path)),
           EditorView.contentAttributes.of({
-            "aria-label": props.label ?? "Salt okunur kod",
+            "aria-label": props.label ?? "Read-only code",
           }),
           EditorView.updateListener.of((update) => {
             if (update.selectionSet || update.docChanged) {

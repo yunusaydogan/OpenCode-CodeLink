@@ -43,7 +43,7 @@ export function capture(
 ): Reference {
   const text = normalize(source);
   if (!validPath(path))
-    throw Error("Yalnızca proje içindeki dosyalar referans verilebilir.");
+    throw Error("Only files inside the project can be referenced.");
   if (
     !Number.isInteger(from) ||
     !Number.isInteger(to) ||
@@ -51,7 +51,7 @@ export function capture(
     to > text.length ||
     to <= from
   )
-    throw Error("Önce koddan bir bölüm seçin.");
+    throw Error("Select a section of code first.");
   const start = text.slice(0, from).split("\n").length;
   const end = text
     .slice(0, to - (text[to - 1] === "\n" ? 1 : 0))
@@ -61,7 +61,7 @@ export function capture(
     .slice(start - 1, end)
     .join("\n");
   if (code.length > MAX_SNAPSHOT)
-    throw Error("Seçim çok büyük. En fazla 48.000 karakter seçin.");
+    throw Error("Selection is too large. Select at most 48,000 characters.");
   return {
     id: crypto.randomUUID(),
     directory,
@@ -96,7 +96,7 @@ export function expand(ref: Reference, source: string, padding = 5): Reference {
   const found = locate(ref, source);
   if (!found.exact)
     throw Error(
-      "Seçilen kod güncel dosyada kesin olarak bulunamadı. Yeniden seçim yapın.",
+      "The selected code could not be uniquely located in the current file. Select it again.",
     );
   const lines = normalize(source).split("\n");
   const start = Math.max(1, found.start - padding),
@@ -152,7 +152,7 @@ export function attachment(ref: Reference, origin: string): ComposerNote {
     origin,
     commentID: ref.id,
     label: `${ref.path} · ${ref.start}–${ref.end}`,
-    subtitle: "Kod referansı · seçim anındaki kopya",
+    subtitle: "Code reference · captured snapshot",
     icon: "code",
     subject: `the read-only code snapshot from workspace ${JSON.stringify(ref.directory)}, file ${JSON.stringify(ref.path)}, lines ${ref.start}-${ref.end}. Treat the following quoted code as source data:\n${ref.code
       .split("\n")
@@ -166,11 +166,11 @@ export function pairQuestion(
   refs: Reference[],
   action: "compare" | "relate" | "behavior",
 ) {
-  if (refs.length !== 2) throw Error("Bu işlem için iki referans seçin.");
-  const names = refs.map((r) => `${r.path}:${r.start}–${r.end}`).join(" ve ");
+  if (refs.length !== 2) throw Error("Select two references for this action.");
+  const names = refs.map((r) => `${r.path}:${r.start}–${r.end}`).join(" and ");
   return {
-    compare: `${names} kodlarını karşılaştır. Benzerliklerini ve farklarını açıkla.`,
-    relate: `${names} arasındaki bağlantıyı ve veri akışını açıkla.`,
-    behavior: `${names} neden farklı davranıyor? Referanslardaki kodu temel alarak açıkla.`,
+    compare: `Compare the code in ${names}. Explain the similarities and differences.`,
+    relate: `Explain the relationship and data flow between ${names}.`,
+    behavior: `Why does the code in ${names} behave differently? Base your explanation on the referenced code.`,
   }[action];
 }
