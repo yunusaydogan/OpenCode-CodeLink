@@ -1,0 +1,2 @@
+# Bundled upstream grammars contain intentional whitespace in generated strings.
+dist/*.cjs -whitespace linguist-generated=true
