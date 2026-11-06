@@ -8,7 +8,7 @@ CodeLink does not edit project files or send messages automatically. You choose 
 
 ![CodeLink in dark mode: file tree, code tabs, and references from two files](docs/preview-dark.png)
 
-[Light-mode preview](docs/preview-light.png) · [Installation](#installation) · [Usage](#usage) · [Keyboard shortcuts](#keyboard-shortcuts) · [Troubleshooting](#troubleshooting)
+[Light-mode preview](docs/preview-light.png) · [Install with a prompt](#install-with-an-opencode-prompt) · [Installation](#installation) · [Usage](#usage) · [Keyboard shortcuts](#keyboard-shortcuts) · [Troubleshooting](#troubleshooting)
 
 The screenshots use a sample project in the browser test fixture.
 
@@ -41,6 +41,49 @@ Syntax highlighting is included for JavaScript, TypeScript, JSX, TSX, Python, JS
 - The plugin has no OS restriction, but verification so far has been on **Linux**. macOS and Windows have not been tested on native machines.
 
 This is a **Desktop GUI plugin**, not a terminal plugin or a VS Code extension. It does not require a separate model API key, background service, or account beyond your existing OpenCode setup.
+
+## Install with an OpenCode prompt
+
+Copy the following prompt into an OpenCode conversation that has terminal access to the computer running your Desktop app. OpenCode can carry out the clone, build, and registration steps for you:
+
+```text
+Please install OpenCode CodeLink into my existing OpenCode Desktop setup.
+
+Repository: https://github.com/yunusaydogan/OpenCode-CodeLink
+Internal plugin ID: opencode-code-reference
+
+1. Read the repository's current README and package.json. Check Git, npm,
+   Node.js >= 22.18, and Desktop GUI plugin support. The verified host version
+   is OpenCode Desktop 2.2.5; do not upgrade or downgrade my app automatically.
+   If a prerequisite is missing or the GUI API is unsupported, explain the
+   exact blocker instead of claiming installation succeeded.
+2. Find the global config used by this Desktop app, respecting custom config
+   locations and XDG_CONFIG_HOME. Check for an existing CodeLink registration.
+   Reuse its clone if present; do not create duplicate plugin entries. Do not
+   overwrite local changes in an existing clone.
+3. Otherwise clone the repository into a permanent user-owned location outside
+   my current project, such as ~/opencode-plugins/OpenCode-CodeLink. Keep that
+   directory after installation because the plugin loads from its absolute path.
+4. In the clone, run npm ci and npm run build. Stop and report any failure.
+5. Register it with npm run install:local, or use
+   node scripts/install.mjs --config-dir "ACTUAL_GLOBAL_CONFIG_DIRECTORY"
+   for a custom location. Preserve my other plugins, settings, JSONC comments,
+   and config backups. For a symlinked config, explain the installer limitation
+   and use the documented manual method without replacing the symlink.
+6. Verify that dist/gui-experimental.cjs exists and that the config's plural
+   plugins array points to this clone's absolute directory. If the running local
+   OpenCode service is accessible, check that opencode-code-reference is active
+   and that it serves the newly built GUI bundle. Do not print credentials.
+7. Tell me the installation path, config file, backup location if one was made,
+   and what was actually verified. Explain how to open + > CodeLink or use
+   Ctrl+Shift+E (Cmd+Shift+E on macOS). Do not terminate the running OpenCode
+   process from inside this conversation; tell me if a restart is necessary.
+
+Perform the installation, not just a description of the steps. Do not modify
+my project's source code or send any model requests to test the plugin.
+```
+
+The installing agent needs local filesystem and command access. A conversation running only on a remote server cannot install a GUI plugin into your local Desktop app without access to that computer. If you prefer to run the commands yourself, follow the installation steps below.
 
 ## Installation
 
