@@ -27,6 +27,7 @@ import {
 import { initialState, type StatePort, type ViewState } from "./state.ts";
 import { searchProject, type SearchHit } from "./search.ts";
 import { patchSides } from "./diff.ts";
+import { displayName } from "./paths.ts";
 
 export type ExplorerProps = PanelProps & {
   retainWatch?: (path: string) => boolean;
@@ -369,7 +370,7 @@ export function Explorer(props: ExplorerProps) {
       <>
         <Show when={p.path !== ""}>
           <button
-            aria-label={p.path.split("/").pop()}
+            aria-label={displayName(p.path)}
             class="cr-tree-row cr-dir"
             style={{ "padding-left": `${8 + p.depth * 12}px` }}
             onClick={() => {
@@ -379,7 +380,7 @@ export function Explorer(props: ExplorerProps) {
             aria-expanded={expanded()}
           >
             <span aria-hidden="true">{expanded() ? "▾" : "▸"}</span>
-            {p.path.split("/").pop()}
+            {displayName(p.path)}
           </button>
         </Show>
         <Show when={expanded()}>
@@ -411,7 +412,7 @@ export function Explorer(props: ExplorerProps) {
                     title={path}
                     onClick={() => safely(() => open(path))}
                   >
-                    <span class="cr-file-name">{path.split("/").pop()}</span>
+                    <span class="cr-file-name">{displayName(path)}</span>
                     <Show
                       when={props.changes()?.kinds(props.session).has(path)}
                     >

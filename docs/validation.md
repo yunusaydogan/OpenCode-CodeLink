@@ -1,5 +1,11 @@
 # Verification — 2026-11-06
 
+## Directory label regression fix
+
+Confirmed against the running native API that directories are returned as `.git/`, `src/`, `docs/`, etc. Taking the last slash-separated segment produced empty labels. The display-name helper now strips trailing slash/backslash separators without changing the API path used to open directories. The browser fixture now reproduces native trailing-slash paths, including nested folders.
+
+`npm run check`: 15 Node tests and 10 browser tests passed, including native-style directory labels and nested navigation. Typecheck and build passed. OpenCode Desktop was gracefully restarted (new main PID 874223). Its local service reports the plugin active and serves code identical to the rebuilt GUI bundle. Native directory label extraction was verified against that service.
+
 - `npm run check`: PASS. 14 Node tests, TypeScript checking, production GUI bundle, 9 Chromium interaction tests.
 - `node test/live-smoke.mjs`: PASS against `/opt/OpenCode/resources/opencode-cli` 2.2.5. A temporary isolated server registered the GUI-only plugin, served its bundle, listed and read files. No model request or modification to user sessions.
 - `node scripts/preview.mjs`: light/dark previews rendered without browser errors; both images visually inspected. Dark syntax and selection contrast corrected. These are browser fixture previews, not screenshots of the actual Desktop window.

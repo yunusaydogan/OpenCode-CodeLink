@@ -4,6 +4,19 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/test/fixture.html");
 });
 
+test("native directory paths with trailing separators show names and open nested folders", async ({
+  page,
+}) => {
+  const tree = page.locator(".cr-tree");
+  const src = tree.getByRole("button", { name: "src", exact: true });
+  await expect(src).toHaveText("▸src");
+  await src.click();
+  await tree.getByRole("button", { name: "lib", exact: true }).click();
+  await tree.getByRole("button", { name: "deeper", exact: true }).click();
+  await tree.getByRole("button", { name: "helper.ts", exact: true }).click();
+  await expect(page.locator(".cr-editor")).toContainText("export const helper");
+});
+
 async function openA(page: import("@playwright/test").Page) {
   await page.getByRole("button", { name: "src", exact: true }).click();
   await page.getByRole("button", { name: "a.ts", exact: true }).click();

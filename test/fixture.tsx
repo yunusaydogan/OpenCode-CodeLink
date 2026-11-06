@@ -12,6 +12,7 @@ function App() {
   const [files, setFiles] = createSignal<Record<string, string>>({
     "src/a.ts": a,
     "src/b.py": b,
+    "src/lib/deeper/helper.ts": "export const helper = true;",
     "README.md": "# Example project",
   });
   const [state, setState] = createSignal<Record<string, ViewState>>({});
@@ -29,21 +30,26 @@ function App() {
     tick: number;
   }>();
   const [treeLoaded, setTreeLoaded] = createSignal<string[]>([]);
-  const nodes = (dir: string) =>
-    Object.keys(files())
+  const nodes = (inputDir: string) => {
+    const dir = inputDir.replace(/[\\/]+$/g, "");
+    return Object.keys(files())
       .filter((p) => p.startsWith(dir ? dir + "/" : ""))
       .map((path) => {
         const remainder = path.slice(dir ? dir.length + 1 : 0),
           name = remainder.split("/")[0];
         return {
           name,
-          path: dir ? dir + "/" + name : name,
+          // OpenCode 2.2.5's real file.list response includes a trailing slash for directories.
+          path:
+            (dir ? dir + "/" + name : name) +
+            (remainder.includes("/") ? "/" : ""),
           type: remainder.includes("/") ? "directory" : "file",
           absolute: "/repo/" + path,
           ignored: false,
         };
       })
       .filter((n, i, all) => all.findIndex((a) => a.path === n.path) === i);
+  };
   const file = {
     get root() {
       return "/repo";
